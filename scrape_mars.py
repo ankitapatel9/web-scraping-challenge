@@ -1,17 +1,19 @@
 # Dependencies
 # --------------------------------------------------------------------------
+# import os
+# import requests
+# from splinter import Browser
+# from bs4 import BeautifulSoup
+# from selenium import webdriver
 import pandas as pd
-import os
-import requests
+import time
 from splinter import Browser
 from bs4 import BeautifulSoup
-from selenium import webdriver
-import time
 
 # --------------------------------------------------------------------------
 # navigation to chrome website
 executable_path = {'executable_path': 'chromedriver.exe'}
-browser =  Browser('chrome', **executable_path, headless=False)
+browser =  Browser('chrome', **executable_path, headless=True)
 
 # --------------------------------------------------------------------------
 # define one fuction scrape that has all dict.
@@ -25,7 +27,7 @@ def scrape():
     scraped_data["mars_weather"] = mars_weather()
     scraped_data["mars_facts"] = mars_facts()
     scraped_data["mars_hemisphere"] = mars_hem_data()
-
+    browser.quit()
     return scraped_data
 
 #--------------------------------------------------------------------------
@@ -88,9 +90,9 @@ def  mars_facts():
     mars_fact_url = "https://space-facts.com/mars/"
     mars_table = pd.read_html(mars_fact_url)
     df = mars_table[0]
-    df.columns = ['facts', 'values']
-    df.head(15)
-    mars_facts = df.to_html(index = False)
+    df.columns = ['description', 'values']
+    df = df.set_index('description')
+    mars_facts = df.to_html(header =True)
     # print(mars_facts)
     return mars_facts
 
